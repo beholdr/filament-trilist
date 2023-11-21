@@ -1,8 +1,6 @@
 # Filament Trilist ☘️
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/beholdr/filament-trilist.svg?style=flat-square)](https://packagist.org/packages/beholdr/filament-trilist)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/beholdr/filament-trilist/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/beholdr/filament-trilist/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/beholdr/filament-trilist/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/beholdr/filament-trilist/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/beholdr/filament-trilist.svg?style=flat-square)](https://packagist.org/packages/beholdr/filament-trilist)
 
 Filament plugin for working with tree data: **treeselect input** and **treeview page**. Based on [Trilist package](https://github.com/beholdr/trilist/).
