@@ -16,6 +16,7 @@
                     disabled: @js($getDisabledOptions()),
                     onChangeHook: (value) => this.state = value
                 })
+                this.$watch('state', () => $el.trilist.setValue(this.state))
             }
         }"
 
