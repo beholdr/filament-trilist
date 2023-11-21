@@ -7,60 +7,59 @@ use Filament\Resources\Resource;
 
 class TrilistPage extends Page
 {
-    public static string $tableRoute = 'index';
-
-    public static string $editRoute = 'edit';
-
     protected static string $view = 'filament-trilist::page';
+
+    protected static string $tableRoute = 'index';
+
+    protected static string $editRoute = 'edit';
 
     public function getTreeOptions(): array
     {
         return []; // override this
     }
 
-    public function getEditRoute(): ?string
+    public static function getTableRoute(): string
+    {
+        return static::$tableRoute;
+    }
+
+    public static function getEditRoute(): ?string
     {
         /** @var Resource */
-        $resource = $this::$resource;
-
-        $pages = $resource::getPages();
-
-        if (empty($pages[$this::$editRoute])) {
-            return null;
-        }
+        $resource = static::$resource;
 
         /** @var Page */
-        $editPage = $pages[$this::$editRoute]->getPage();
+        $editPage = $resource::getPages()[static::$editRoute]->getPage();
 
         return $editPage::getRouteName();
     }
 
-    public function getFieldId(): string
+    public static function getFieldId(): string
     {
         return 'id';
     }
 
-    public function getFieldLabel(): string
+    public static function getFieldLabel(): string
     {
         return 'label';
     }
 
-    public function getFieldChildren(): string
+    public static function getFieldChildren(): string
     {
         return 'children';
     }
 
-    public function isAnimated(): bool
+    public static function isAnimated(): bool
     {
         return true;
     }
 
-    public function isSearchable(): bool
+    public static function isSearchable(): bool
     {
-        return true;
+        return false;
     }
 
-    public function getSearchPrompt(): string
+    public static function getSearchPrompt(): string
     {
         return __('filament-forms::components.select.search_prompt');
     }

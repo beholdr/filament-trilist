@@ -122,11 +122,7 @@ class AdminPanelProvider extends PanelProvider
 }
 ```
 
-1. Generate custom page for a treeview, following instructions on [Filament docs](https://filamentphp.com/docs/3.x/panels/resources/custom-pages).
-
-2. Change newly generated class to extend `Beholdr\FilamentTrilist\Components\TrilistPage`
-
-3. Add `getTreeOptions()` method to load tree items:
+Create custom page class inside `Pages` directory of your resource directory:
 
 ``` php
 namespace App\Filament\Resources\PostResource\Pages;
@@ -135,7 +131,7 @@ use App\Filament\Resources\PostResource;
 use App\Models\Post;
 use Beholdr\FilamentTrilist\Components\TrilistPage;
 
-class TrilistPosts extends TrilistPage
+class TreePosts extends TrilistPage
 {
     protected static string $resource = PostResource::class;
 
@@ -150,9 +146,21 @@ class TrilistPosts extends TrilistPage
 }
 ```
 
+Register created page in the static `getPages()` method of your resource:
+
+``` php
+public static function getPages(): array
+{
+    return [
+        // ...
+        'tree' => Pages\TreePosts::route('/tree'),
+    ];
+}
+```
+
 ### Treeview as index page
 
-If you want to show treeview page as a first page of a given resource, you need to modify `getPages()` method:
+If you want to show treeview page as a first page of a resource, please modify `getPages()` method:
 
 ``` diff
 class PostResource extends Resource
@@ -161,7 +169,8 @@ class PostResource extends Resource
     {
         return [
             // change 'index' to custom trilist page
-+           'index' => Pages\TrilistPosts::route('/'),
+-           'tree' => Pages\TreePosts::route('/tree'),
++           'index' => Pages\TreePosts::route('/'),
             // change default index page to 'table' (change both key and route)
 -           'index' => Pages\ListPosts::route('/'),
 +           'table' => Pages\ListPosts::route('/table'),
@@ -172,14 +181,35 @@ class PostResource extends Resource
 }
 ```
 
-Then add `$tableRoute` property to the trilist page class:
+Then override `tableRoute` property on the trilist page class:
 
 ``` php
 class TrilistPosts extends TrilistPage
 {
-    public static string $tableRoute = 'table';
+    protected static string $tableRoute = 'table';
 }
 ```
+
+### Treeview options
+
+You can set some tree options by overriding static methods in the custom page class:
+
+``` php
+class TreeCategories extends TrilistPage
+{
+    public static function getFieldLabel(): string
+    {
+        return 'name';
+    }
+}
+```
+
+- `getFieldId()`: tree item id field name
+- `getFieldLabel()`: tree item label field name
+- `getFieldChildren()`: tree item children field name
+- `isAnimated()`: animate expand/collapse, default: true
+- `isSearchable()`: enable filtering of items, default: false
+- `getSearchPrompt()`: search input placeholder
 
 ### Custom tab icons
 

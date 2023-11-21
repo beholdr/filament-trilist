@@ -35,7 +35,7 @@ class FilamentTrilistPlugin implements Plugin
                     $treeIcon = $this->tabIconTree;
 
                     /** @var Page */
-                    $tablePage = $pages[$trilistPage::$tableRoute]->getPage();
+                    $tablePage = $pages[$trilistPage::getTableRoute()]->getPage();
                     $tableTitle = $tablePage::getNavigationLabel();
                     $tableRoute = $tablePage::getRouteName($panel->getId());
                     $tableIcon = $this->tabIconTable;
