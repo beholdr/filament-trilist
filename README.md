@@ -101,6 +101,33 @@ TrilistSelect::make(string $fieldName)
     ->cancelButton(string | Htmlable | Closure $message)
 ```
 
+### Usage in filters
+
+You can use treeselect in [custom filter](https://filamentphp.com/docs/3.x/tables/filters#custom-filter-forms):
+
+``` php
+use App\Models\Category;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
+
+Filter::make('category')
+    ->form([
+        TrilistSelect::make('category_id')
+            ->multiple()
+            ->leafs()
+            ->options(Category::tree()->get()->toTree())
+    ])
+    ->query(fn (Builder $query, array $data) => $query->when(
+        $data['category_id'],
+        fn (Builder $query, $values) => $query->whereIn('category_id', $values)
+    ))
+    ->indicateUsing(function (array $data) {
+        if (! $data['category_id']) return null;
+
+        return Category::query()->whereIn('id', $data['category_id'])->pluck('name')->toArray();
+    }),
+```
+
 ## Treeview page
 
 ![Treeview page](https://github.com/beholdr/filament-trilist/assets/741973/4d0f92d6-aca8-42bd-896a-0eb94cb32858)
