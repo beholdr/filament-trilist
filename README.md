@@ -93,6 +93,12 @@ TrilistSelect::make(string $fieldName)
 
     // search input placeholder
     ->searchPrompt(string | Htmlable | Closure $message)
+
+    // select button label
+    ->selectButton(string | Htmlable | Closure $message)
+
+    // cancel button label
+    ->cancelButton(string | Htmlable | Closure $message)
 ```
 
 ## Treeview page
