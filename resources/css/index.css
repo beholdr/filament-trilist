@@ -1,1 +1,26 @@
-@import '../../vendor/filament/filament/resources/css/theme.css';
+:root {
+    --trilist-border-radius: 8px;
+    --trilist-border-radius-sm: 6px;
+    --trilist-text-sm: 13px;
+
+    --trilist-colors-accent: rgb(var(--primary-600));
+    --trilist-colors-tag: rgb(var(--primary-50));
+    --trilist-colors-tag-border: rgb(var(--primary-600), 0.1);
+    --trilist-colors-tag-text: rgb(var(--primary-600));
+    --trilist-colors-input: rgb(var(--gray-200));
+    --trilist-colors-icon: rgb(var(--gray-400));
+    --trilist-colors-hover: rgb(var(--gray-500));
+    --trilist-colors-text: rgb(var(--gray-950));
+    --trilist-colors-fone: rgb(255 255 255);
+}
+:root.dark {
+    --trilist-colors-accent: rgb(var(--primary-500));
+    --trilist-colors-tag: rgb(var(--primary-400), 0.1);
+    --trilist-colors-tag-border: rgb(var(--primary-400), 0.3);
+    --trilist-colors-tag-text: rgb(var(--primary-400));
+    --trilist-colors-input: rgb(var(--gray-700));
+    --trilist-colors-icon: rgb(var(--gray-500));
+    --trilist-colors-hover: rgb(var(--gray-400));
+    --trilist-colors-text: rgb(255 255 255);
+    --trilist-colors-fone: rgb(255 255 255 / 0.05);
+}

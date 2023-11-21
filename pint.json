@@ -1,6 +1,7 @@
 {
     "preset": "laravel",
     "rules": {
+        "phpdoc_types": false,
         "blank_line_before_statement": true,
         "concat_space": {
             "spacing": "one"
