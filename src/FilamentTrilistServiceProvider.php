@@ -23,8 +23,7 @@ class FilamentTrilistServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package->name(static::$name)
-            ->hasViews(static::$viewNamespace)
-            ->hasViewComponent(static::$viewNamespace, 'tabs');
+            ->hasViews(static::$viewNamespace);
     }
 
     public function packageBooted(): void

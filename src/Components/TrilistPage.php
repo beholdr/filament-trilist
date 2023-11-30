@@ -9,8 +9,6 @@ class TrilistPage extends Page
 {
     protected static string $view = 'filament-trilist::page';
 
-    protected static string $tableRoute = 'index';
-
     protected static string $editRoute = 'edit';
 
     public function getTreeOptions(): array
@@ -18,20 +16,17 @@ class TrilistPage extends Page
         return []; // override this
     }
 
-    public static function getTableRoute(): string
+    public function getLabelHook(): string
     {
-        return static::$tableRoute;
-    }
+        if (! $editRoute = $this->getEditRoute()) {
+            return 'undefined';
+        }
 
-    public static function getEditRoute(): ?string
-    {
-        /** @var Resource */
-        $resource = static::$resource;
+        $template = route($editRoute, ['record' => '#ID#'], false);
 
-        /** @var Page */
-        $editPage = $resource::getPages()[static::$editRoute]->getPage();
-
-        return $editPage::getRouteName();
+        return <<<JS
+        (item) => `<a href='\${'{$template}'.replace('#ID#', item.id)}'>\${item.label}</a>`
+        JS;
     }
 
     public static function getFieldId(): string
@@ -62,5 +57,21 @@ class TrilistPage extends Page
     public static function getSearchPrompt(): string
     {
         return __('filament-forms::components.select.search_prompt');
+    }
+
+    protected function getEditRoute(): ?string
+    {
+        /** @var Resource */
+        $resource = static::$resource;
+        $pages = $resource::getPages();
+
+        if (empty($pages[static::$editRoute])) {
+            return null;
+        }
+
+        /** @var Page */
+        $editPage = $pages[static::$editRoute]->getPage();
+
+        return $editPage::getRouteName();
     }
 }

@@ -35,7 +35,7 @@ php artisan vendor:publish --tag="filament-trilist-views"
 
 Import `TrilistSelect` class and use it on your Filament form:
 
-``` php
+```php
 use Beholdr\FilamentTrilist\Components\TrilistSelect
 
 // with custom tree data (see below about tree data)
@@ -49,7 +49,7 @@ TrilistSelect::make('category_id')
 
 Full options list:
 
-``` php
+```php
 TrilistSelect::make(string $fieldName)
     ->label(string $fieldLabel)
     ->placeholder(string | Closure $placeholder)
@@ -105,7 +105,7 @@ TrilistSelect::make(string $fieldName)
 
 You can use treeselect in [custom filter](https://filamentphp.com/docs/3.x/tables/filters#custom-filter-forms):
 
-``` php
+```php
 use App\Models\Category;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
@@ -130,28 +130,11 @@ Filter::make('category')
 
 ## Treeview page
 
-![Treeview page](https://github.com/beholdr/filament-trilist/assets/741973/4d0f92d6-aca8-42bd-896a-0eb94cb32858)
+![Treeview page](https://github.com/beholdr/filament-trilist/assets/741973/225ea768-3c42-45c3-a80d-88bdb159a4e5)
 
-Import `FilamentTrilistPlugin` class and use it on your Filament panel provider:
+Create custom page class inside `Pages` directory of your resource directory. Note that page class extends `Beholdr\FilamentTrilist\Components\TrilistPage`:
 
 ```php
-use Beholdr\FilamentTrilist\FilamentTrilistPlugin;
-
-class AdminPanelProvider extends PanelProvider
-{
-    public function panel(Panel $panel): Panel
-    {
-        return $panel
-            ->plugins([
-                FilamentTrilistPlugin::make(),
-            ]);
-    }
-}
-```
-
-Create custom page class inside `Pages` directory of your resource directory:
-
-``` php
 namespace App\Filament\Resources\PostResource\Pages;
 
 use App\Filament\Resources\PostResource;
@@ -175,7 +158,7 @@ class TreePosts extends TrilistPage
 
 Register created page in the static `getPages()` method of your resource:
 
-``` php
+```php
 public static function getPages(): array
 {
     return [
@@ -185,11 +168,32 @@ public static function getPages(): array
 }
 ```
 
+Add link for the page to a panel navigation:
+
+```php
+use Beholdr\FilamentTrilist\FilamentTrilistPlugin;
+use Filament\Navigation\NavigationItem;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->navigationItems([
+                NavigationItem::make('Tree')
+                    ->url(fn () => route('filament.admin.resources.posts.tree'))
+                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.posts.tree'))
+                    ->parentItem('Posts'),
+            ])
+    }
+}
+```
+
 ### Treeview as index page
 
-If you want to show treeview page as a first page of a resource, please modify `getPages()` method:
+If you want to show treeview page as a first page of a resource, modify `getPages()` method:
 
-``` diff
+```diff
 class PostResource extends Resource
 {
     public static function getPages(): array
@@ -208,20 +212,20 @@ class PostResource extends Resource
 }
 ```
 
-Then override `tableRoute` property on the trilist page class:
+Then change navigation link to point to the table page instead of tree:
 
-``` php
-class TrilistPosts extends TrilistPage
-{
-    protected static string $tableRoute = 'table';
-}
+```php
+NavigationItem::make('Table')
+    ->url(fn () => route('filament.admin.resources.posts.table'))
+    ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.posts.table'))
+    ->parentItem('Posts'),
 ```
 
 ### Treeview options
 
 You can set some tree options by overriding static methods in the custom page class:
 
-``` php
+```php
 class TreeCategories extends TrilistPage
 {
     public static function getFieldLabel(): string
@@ -238,21 +242,11 @@ class TreeCategories extends TrilistPage
 - `isSearchable()`: enable filtering of items, default: false
 - `getSearchPrompt()`: search input placeholder
 
-### Custom tab icons
-
-To change default tab icons you can use given methods on plugin initialization:
-
-``` php
-FilamentTrilistPlugin::make()
-    ->tabIconTree('heroicon-o-bars-3-bottom-left')
-    ->tabIconTable('heroicon-o-table-cells')
-```
-
 ## Tree data
 
-You can use hierarchical data from any source while it follows format:
+You can use hierarchical data from any source when it follows format:
 
-``` php
+```php
 [
     ['id' => 'ID', 'label' => 'Item label', 'children' => [
         ['id' => 'ID', 'label' => 'Item label', 'children' => [...]],
@@ -265,7 +259,7 @@ You can use hierarchical data from any source while it follows format:
 
 You can use special library like [staudenmeir/laravel-adjacency-list](https://github.com/staudenmeir/laravel-adjacency-list) to generate tree items data, for example:
 
-``` php
+```php
 Category::tree()->get()->toTree()
 ```
 
@@ -274,7 +268,7 @@ Or use your own relationship methods, even with `ManyToMany` (multiple parents) 
 <details>
 <summary>Migrations</summary>
 
-``` php
+```php
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -307,7 +301,7 @@ return new class extends Migration
 <details>
 <summary>Model</summary>
 
-``` php
+```php
 namespace App\Models;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -337,7 +331,7 @@ class Profession extends Model
 
 With given model you can generate tree data like this:
 
-``` php
+```php
 Profession::root()->get();
 ```
 

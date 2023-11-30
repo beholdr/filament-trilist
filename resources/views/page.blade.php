@@ -1,7 +1,3 @@
-@php
-    $editRoute = $this->getEditRoute();
-@endphp
-
 <x-filament-panels::page>
     <div
         x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('filament-trilist', package: 'beholdr/filament-trilist'))]"
@@ -14,13 +10,10 @@
             <trilist-view
                 x-data="{
                     async init() {
-                        const editUrlTpl = '{{ $editRoute ? route($editRoute, ['record' => '#ID#']) : '' }}'
                         const items = await $wire.$call('getTreeOptions')
                         $el.init({
                             items,
-                            labelHook: (item) => editUrlTpl
-                                ? `<a href='${editUrlTpl.replace('#ID#', item.id)}' style='text-decoration: underline'>${item.label}</a>`
-                                : item.label
+                            labelHook: {!! $this->getLabelHook() !!}
                         })
                     }
                 }"
