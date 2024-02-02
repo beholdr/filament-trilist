@@ -114,17 +114,28 @@ Filter::make('category')
     ->form([
         TrilistSelect::make('category_id')
             ->multiple()
-            ->leafs()
+            ->independent()
             ->options(Category::tree()->get()->toTree())
     ])
-    ->query(fn (Builder $query, array $data) => $query->when(
-        $data['category_id'],
-        fn (Builder $query, $values) => $query->whereIn('category_id', $values)
-    ))
+    ->query(function (Builder $query, array $data) {
+        $query->when(
+            $data['category_id'],
+            function (Builder $query, $values) {
+                $ids = Category::whereIn('id', $values)
+                    ->get()
+                    ->map(fn (Category $category) => $category
+                        ->descendantsAndSelf()
+                        ->pluck('id')
+                        ->toArray()
+                    )->flatten();
+                $query->whereIn('category_id', $ids);
+            }
+        );
+    })
     ->indicateUsing(function (array $data) {
         if (! $data['category_id']) return null;
 
-        return Category::query()->whereIn('id', $data['category_id'])->pluck('name')->toArray();
+        return Category::whereIn('id', $data['category_id'])->pluck('name')->toArray();
     }),
 ```
 
