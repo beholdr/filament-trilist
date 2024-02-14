@@ -253,6 +253,31 @@ class TreeCategories extends TrilistPage
 - `isSearchable()`: enable filtering of items, default: false
 - `getSearchPrompt()`: search input placeholder
 
+### Customize labels
+
+If you want to customize labels of the tree items, you can override `getLabelHook()` method of the `TrilistPage`.
+
+<details>
+<summary>Example</summary>
+
+Say, model for your tree items has a `description` field that you want to output below the item name. All additional properties of your model are under `item.data` property, so description will be at `item.data.description`:
+
+```php
+public function getLabelHook(): string
+{
+    if (! $editRoute = $this->getEditRoute()) {
+        return 'undefined';
+    }
+
+    $template = route($editRoute, ['record' => '#ID#'], false);
+
+    return <<<JS
+    (item) => `<a href='\${'{$template}'.replace('#ID#', item.id)}'>\${item.label}</a> \${item.data?.description ? '<div style=\'font-size: 0.85em; opacity: 0.5\'>' + item.data.description + '</div>' : ''}`
+    JS;
+}
+```
+</details>
+
 ## Tree data
 
 You can use hierarchical data from any source when it follows format:
