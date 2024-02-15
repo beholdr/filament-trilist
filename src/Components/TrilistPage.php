@@ -2,6 +2,7 @@
 
 namespace Beholdr\FilamentTrilist\Components;
 
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 
@@ -73,5 +74,17 @@ class TrilistPage extends Page
         $editPage = $pages[static::$editRoute]->getPage();
 
         return $editPage::getRouteName();
+    }
+
+    public static function getNavigationItems(array $urlParameters = []): array
+    {
+        $pageName = '.' . static::getResourcePageName();
+
+        return [
+            NavigationItem::make(static::getNavigationLabel())
+                ->url(fn () => route(static::getResource()::getRouteBaseName() . $pageName))
+                ->isActiveWhen(fn () => request()->routeIs(static::getResource()::getRouteBaseName() . $pageName))
+                ->parentItem(fn () => static::getResource()::getNavigationLabel()),
+        ];
     }
 }

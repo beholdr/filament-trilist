@@ -157,7 +157,7 @@ Filter::make('category')
 
 ![Treeview page](https://github.com/beholdr/filament-trilist/assets/741973/225ea768-3c42-45c3-a80d-88bdb159a4e5)
 
-Create custom page class inside `Pages` directory of your resource directory. Note that page class extends `Beholdr\FilamentTrilist\Components\TrilistPage`:
+Create [custom page class](https://filamentphp.com/docs/3.x/panels/resources/custom-pages) inside `Pages` directory of your resource directory. Note that page class extends `Beholdr\FilamentTrilist\Components\TrilistPage`:
 
 ```php
 namespace App\Filament\Resources\PostResource\Pages;
@@ -193,9 +193,10 @@ public static function getPages(): array
 }
 ```
 
-Add link for the page to a panel navigation:
+Add link for a newly created page to your panel navigation:
 
 ```php
+use App\Filament\Resources\PostResource\Pages\TreePosts;
 use Beholdr\FilamentTrilist\FilamentTrilistPlugin;
 use Filament\Navigation\NavigationItem;
 
@@ -204,46 +205,9 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->navigationItems([
-                NavigationItem::make('Tree')
-                    ->url(fn () => route('filament.admin.resources.posts.tree'))
-                    ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.posts.tree'))
-                    ->parentItem('Posts'),
-            ])
+            ->navigationItems(TreePosts::getNavigationItems())
     }
 }
-```
-
-### Treeview as index page
-
-If you want to show treeview page as a first page of a resource, modify `getPages()` method:
-
-```diff
-class PostResource extends Resource
-{
-    public static function getPages(): array
-    {
-        return [
-            // change 'index' to custom trilist page
--           'tree' => Pages\TreePosts::route('/tree'),
-+           'index' => Pages\TreePosts::route('/'),
-            // change default index page to 'table' (change both key and route)
--           'index' => Pages\ListPosts::route('/'),
-+           'table' => Pages\ListPosts::route('/table'),
-            'create' => Pages\CreatePost::route('/create'),
-            'edit' => Pages\EditPost::route('/{record}/edit'),
-        ];
-    }
-}
-```
-
-Then change navigation link to point to the table page instead of tree:
-
-```php
-NavigationItem::make('Table')
-    ->url(fn () => route('filament.admin.resources.posts.table'))
-    ->isActiveWhen(fn () => request()->routeIs('filament.admin.resources.posts.table'))
-    ->parentItem('Posts'),
 ```
 
 ### Treeview options
