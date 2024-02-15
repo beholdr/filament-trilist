@@ -14,7 +14,8 @@
                     items,
                     value: this.state,
                     disabled: @js($getDisabledOptions()),
-                    onChangeHook: (value) => this.state = value
+                    onChangeHook: (value) => this.state = value,
+                    labelHook: {!! $getLabelHook() !!}
                 })
                 this.$watch('state', () => $el.trilist.setValue(this.state))
             }

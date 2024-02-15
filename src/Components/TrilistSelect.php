@@ -47,6 +47,10 @@ class TrilistSelect extends Field
 
     protected string | Closure $fieldChildren = 'children';
 
+    protected string | Closure $labelHook = <<<JS
+    (item) => item.label
+    JS;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -275,5 +279,17 @@ class TrilistSelect extends Field
     public function getDisabledOptions(): array
     {
         return (array) $this->evaluate($this->disabledOptions);
+    }
+
+    public function labelHook(string | Closure $value): static
+    {
+        $this->labelHook = $value;
+
+        return $this;
+    }
+
+    public function getLabelHook(): string
+    {
+        return (string) $this->evaluate($this->labelHook);
     }
 }

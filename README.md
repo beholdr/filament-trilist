@@ -88,6 +88,9 @@ TrilistSelect::make(string $fieldName)
     // tree item children field name, default: 'children'
     ->fieldChildren(string | Closure $value)
 
+    // hook for generating custom labels, default: '(item) => item.label'
+    ->labelHook(string | Closure $value)
+
     // enable filtering of items, default: false
     ->searchable(bool | Closure $condition)
 
@@ -99,6 +102,17 @@ TrilistSelect::make(string $fieldName)
 
     // cancel button label
     ->cancelButton(string | Htmlable | Closure $message)
+```
+
+### Custom labels
+
+If you want to customize labels you can use `labelHook` method. It should return a string that will be processed as JS (pay attention to escaping quotes and special characters):
+
+```php
+TrilistSelect::make('parent_id')
+    ->labelHook(fn () => <<<JS
+        (item) => `\${item.label} \${item.data?.description ? '<div style=\'font-size: 0.85em; opacity: 0.5\'>' + item.data.description + '</div>' : ''}`
+        JS)
 ```
 
 ### Usage in filters
@@ -253,7 +267,7 @@ class TreeCategories extends TrilistPage
 - `isSearchable()`: enable filtering of items, default: false
 - `getSearchPrompt()`: search input placeholder
 
-### Customize labels
+### Custom labels
 
 If you want to customize labels of the tree items, you can override `getLabelHook()` method of the `TrilistPage`.
 
