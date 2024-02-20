@@ -29,6 +29,97 @@ Optionally, you can publish the views using
 php artisan vendor:publish --tag="filament-trilist-views"
 ```
 
+## Tree data
+
+You can use hierarchical data from any source when it follows format:
+
+```php
+[
+    ['id' => 'ID', 'label' => 'Item label', 'children' => [
+        ['id' => 'ID', 'label' => 'Item label', 'children' => [...]],
+        ...
+    ]
+]
+```
+
+For example, you can use special library like [staudenmeir/laravel-adjacency-list](https://github.com/staudenmeir/laravel-adjacency-list) to get tree data:
+
+```php
+Category::tree()->get()->toTree()
+```
+
+Or use custom relationship schema and methods, even with `ManyToMany` (multiple parents) relationship.
+
+<details>
+<summary>Example for self-referencing entity</summary>
+
+#### Migrations
+
+```php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('professions', function (Blueprint $table) {
+            $table->id();
+            $table->string('label');
+        });
+
+        Schema::create('profession_profession', function (Blueprint $table) {
+            $table->primary(['parent_id', 'child_id']);
+            $table->foreignId('parent_id')->constrained('professions')->cascadeOnDelete();
+            $table->foreignId('child_id')->constrained('professions')->cascadeOnDelete();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('professions');
+        Schema::dropIfExists('profession_profession');
+    }
+};
+```
+
+#### Model
+
+```php
+namespace App\Models;
+
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class Profession extends Model
+{
+    protected $with = ['children'];
+
+    public function parents()
+    {
+        return $this->belongsToMany(Profession::class, 'profession_profession', 'child_id', 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->belongsToMany(Profession::class, 'profession_profession', 'parent_id', 'child_id');
+    }
+
+    public function scopeRoot(Builder $builder)
+    {
+        $builder->doesntHave('parents');
+    }
+}
+```
+
+With given model you can generate tree data like this:
+
+```php
+Profession::root()->get();
+```
+</details>
+
 ## Treeselect input
 
 ![Treeselect input](https://github.com/beholdr/filament-trilist/assets/741973/fcb8803a-dc92-4c6b-a140-cf3bb12deb0b)
@@ -38,13 +129,15 @@ Import `TrilistSelect` class and use it on your Filament form:
 ```php
 use Beholdr\FilamentTrilist\Components\TrilistSelect
 
-// with custom tree data (see below about tree data)
-TrilistSelect::make('fieldname')
-    ->options($optionsArray),
+// with custom tree data
+TrilistSelect::make('category_id')
+    ->options($treeData),
 
 // or with relationship
-TrilistSelect::make('category_id')
-    ->relationship('category', fn () => Category::tree()->get()->toTree()),
+TrilistSelect::make('categories')
+    ->relationship('categories')
+    ->options($treeData)
+    ->multiple(),
 ```
 
 Full options list:
@@ -55,11 +148,11 @@ TrilistSelect::make(string $fieldName)
     ->placeholder(string | Closure $placeholder)
     ->disabled(bool | Closure $condition)
 
-    // array of tree items (see below about tree data), not necessary if using relationship() option
+    // array of tree items
     ->options(array | Closure $options),
 
-    // first argument defines name of the relationship, second should provide array of tree items (see below about tree data)
-    ->relationship(string | Closure $relationshipName, Closure $getTreeOptions)
+    // first argument defines name of the relationship, second can be used to modify relationship query
+    ->relationship(string | Closure $relationshipName, ?Closure $modifyQueryUsing = null)
 
     // array of ids (or single id) of disabled items
     ->disabledOptions(string | int | array | Closure $value)
@@ -255,99 +348,6 @@ public function getLabelHook(): string
 }
 ```
 </details>
-
-## Tree data
-
-You can use hierarchical data from any source when it follows format:
-
-```php
-[
-    ['id' => 'ID', 'label' => 'Item label', 'children' => [
-        ['id' => 'ID', 'label' => 'Item label', 'children' => [...]],
-        ...
-    ]
-]
-```
-
-### Relationships
-
-You can use special library like [staudenmeir/laravel-adjacency-list](https://github.com/staudenmeir/laravel-adjacency-list) to generate tree items data, for example:
-
-```php
-Category::tree()->get()->toTree()
-```
-
-Or use your own relationship methods, even with `ManyToMany` (multiple parents) relationship. Example for self-referencing entity:
-
-<details>
-<summary>Migrations</summary>
-
-```php
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::create('professions', function (Blueprint $table) {
-            $table->id();
-            $table->string('label');
-        });
-
-        Schema::create('profession_profession', function (Blueprint $table) {
-            $table->primary(['parent_id', 'child_id']);
-            $table->foreignId('parent_id')->constrained('professions')->cascadeOnDelete();
-            $table->foreignId('child_id')->constrained('professions')->cascadeOnDelete();
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('professions');
-        Schema::dropIfExists('profession_profession');
-    }
-};
-```
-</details>
-
-<details>
-<summary>Model</summary>
-
-```php
-namespace App\Models;
-
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-
-class Profession extends Model
-{
-    protected $with = ['children'];
-
-    public function parents()
-    {
-        return $this->belongsToMany(Profession::class, 'profession_profession', 'child_id', 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->belongsToMany(Profession::class, 'profession_profession', 'parent_id', 'child_id');
-    }
-
-    public function scopeRoot(Builder $builder)
-    {
-        $builder->doesntHave('parents');
-    }
-}
-```
-</details>
-
-With given model you can generate tree data like this:
-
-```php
-Profession::root()->get();
-```
 
 ## License
 

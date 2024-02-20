@@ -9,7 +9,6 @@ use Filament\Forms\Components\Field;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -47,7 +46,7 @@ class TrilistSelect extends Field
 
     protected string | Closure $fieldChildren = 'children';
 
-    protected string | Closure $labelHook = <<<JS
+    protected string | Closure $labelHook = <<<'JS'
     (item) => item.label
     JS;
 
@@ -184,21 +183,21 @@ class TrilistSelect extends Field
 
     public function relationship(
         string | Closure $name = null,
-        Closure $getTreeOptions = null,
+        Closure $modifyQueryUsing = null
     ): static {
         $this->relationship = $name ?? $this->getName();
 
-        $this->options(static function (TrilistSelect $component) use ($getTreeOptions) {
-            return $component->evaluate($getTreeOptions);
-        });
-
-        $this->loadStateFromRelationshipsUsing(static function (TrilistSelect $component, $state): void {
+        $this->loadStateFromRelationshipsUsing(static function (TrilistSelect $component, $state) use ($modifyQueryUsing): void {
             if (filled($state)) {
                 return;
             }
 
             if (! $relationship = $component->getRelationship()) {
                 return;
+            }
+
+            if ($modifyQueryUsing) {
+                $component->modifyRelationshipQuery($relationship, $modifyQueryUsing);
             }
 
             if (! $relatedModel = $relationship->getResults()) {
@@ -212,32 +211,44 @@ class TrilistSelect extends Field
                         ->pluck($relationship->getRelatedKeyName())
                         ->toArray()
                 );
-
-                return;
+            } else {
+                $component->state(
+                    $relatedModel->getAttribute(
+                        $relationship->getOwnerKeyName(),
+                    ),
+                );
             }
-
-            $component->state(
-                $relatedModel->getAttribute(
-                    $relationship->getOwnerKeyName(),
-                ),
-            );
         });
 
-        $this->saveRelationshipsUsing(static function (TrilistSelect $component, Model $record, $state) {
+        $this->saveRelationshipsUsing(static function (TrilistSelect $component, $state) use ($modifyQueryUsing) {
             $relationship = $component->getRelationship();
 
-            if (! $relationship instanceof BelongsToMany) {
-                $relationship->associate($state);
-
-                return;
+            if ($modifyQueryUsing) {
+                $component->modifyRelationshipQuery($relationship, $modifyQueryUsing);
             }
 
-            $relationship->sync($state ?? []);
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->detach($relationship->pluck('id')->toArray());
+                $relationship->attach($state);
+            } else {
+                $relationship->associate($state);
+            }
         });
 
         $this->dehydrated(fn (TrilistSelect $component): bool => ! $component->isMultiple());
 
         return $this;
+    }
+
+    public function modifyRelationshipQuery(BelongsTo | BelongsToMany $relationship, Closure $modifyQueryUsing)
+    {
+        $relationshipQuery = $relationship->getQuery();
+
+        $relationshipQuery = $this->evaluate($modifyQueryUsing, [
+            'query' => $relationshipQuery,
+        ]) ?? $relationshipQuery;
+
+        $relationship->setQuery($relationshipQuery->getQuery());
     }
 
     public function getRelationshipName(): ?string
