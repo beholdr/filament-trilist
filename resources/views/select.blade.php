@@ -3,6 +3,7 @@
     :field="$field"
 >
     <trilist-select
+        style="overflow: hidden"
         x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('filament-trilist', package: 'beholdr/filament-trilist'))]"
         x-load-js="[@js(\Filament\Support\Facades\FilamentAsset::getScriptSrc('filament-trilist', package: 'beholdr/filament-trilist'))]"
         x-data="{
