@@ -85,7 +85,8 @@ class TrilistPage extends Page
                 ->url(fn () => route(static::getResource()::getRouteBaseName() . $pageName))
                 ->isActiveWhen(fn () => request()->routeIs(static::getResource()::getRouteBaseName() . $pageName))
                 ->group(fn () => static::getResource()::getNavigationGroup())
-                ->parentItem(fn () => static::getResource()::getNavigationLabel()),
+                ->parentItem(fn () => static::getResource()::getNavigationLabel())
+                ->hidden(fn () => ! static::getResource()::canAccess()),
         ];
     }
 }
