@@ -32,6 +32,9 @@
         @if ($isSearchable())
             filter
             filter-placeholder="{{ $getSearchPrompt() }}"
+            @if ($isAutofocused())
+                filter-autofocus
+            @endif
         @endif
 
         field-id="{{ $getFieldId() }}"

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class TrilistSelect extends Field
 {
+    use Concerns\CanBeAutofocused;
     use Concerns\CanBeSearchable;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasOptions;
