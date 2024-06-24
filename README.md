@@ -187,6 +187,9 @@ TrilistSelect::make(string $fieldName)
     // enable filtering of items, default: false
     ->searchable(bool | Closure $condition)
 
+    // enable autofocus on filter field, default: false
+    ->autofocus(bool | Closure $condition)
+
     // search input placeholder
     ->searchPrompt(string | Htmlable | Closure $message)
 
