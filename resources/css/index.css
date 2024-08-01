@@ -15,7 +15,7 @@
 }
 :root.dark {
     --trilist-color-accent: rgb(var(--primary-500));
-    --trilist-color-bg-primary: rgb(255 255 255 / 0.05);
+    --trilist-color-bg-primary: rgb(30 30 30);
     --trilist-color-bg-secondary: rgb(var(--primary-400), 0.1);
     --trilist-color-border-primary: rgb(var(--gray-700));
     --trilist-color-border-secondary: rgb(var(--primary-400), 0.3);
