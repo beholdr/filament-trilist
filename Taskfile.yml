@@ -45,5 +45,6 @@ tasks:
       - composer install
       - npm ci
       - php artisan storage:link --quiet
+      - php artisan icons:cache
       - task: demo:db-reset
       - task: demo:build
