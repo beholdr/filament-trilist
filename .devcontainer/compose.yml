@@ -1,0 +1,16 @@
+name: filament-trilist
+
+services:
+  app:
+    build:
+      dockerfile: Dockerfile
+    environment:
+      SERVER_NAME: ':80'
+    ports:
+      - 80:80
+    tty: true
+    volumes:
+      - './volumes/caddy_data:/data'
+      - './volumes/caddy_config:/config'
+      - './caddy:/etc/caddy'
+      - '..:/app'

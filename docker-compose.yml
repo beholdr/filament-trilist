@@ -1,8 +1,0 @@
-name: filament-trilist
-
-services:
-  php:
-    image: webdevops/php:8.1-alpine
-    working_dir: /app
-    volumes:
-      - .:/app

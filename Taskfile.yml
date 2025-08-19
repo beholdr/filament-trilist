@@ -1,0 +1,49 @@
+# https://taskfile.dev
+
+version: '3'
+
+silent: true
+
+tasks:
+  code:format: npx prettier resources --write
+  code:analyse: php -d memory_limit=1G ./vendor/bin/phpstan
+
+  demo:build:
+    dir: demo
+    cmd: npm run build
+
+  demo:dev:
+    dir: demo
+    cmd: npm run dev
+
+  demo:ide-helper:
+    dir: demo
+    cmd: composer run ide-helper
+
+  demo:db-reset:
+    dir: demo
+    cmds:
+      - touch database/database.sqlite
+      - php artisan migrate:fresh --seed
+
+  init:
+    cmds:
+      - task: init-blaisy
+      - task: init-demo
+      - echo "✅ App is ready! You can run 'task demo:dev' to start hacking."
+
+  init-blaisy:
+    internal: true
+    cmds:
+      - composer install
+      - npm ci
+
+  init-demo:
+    internal: true
+    dir: demo
+    cmds:
+      - composer install
+      - npm ci
+      - php artisan storage:link --quiet
+      - task: demo:db-reset
+      - task: demo:build

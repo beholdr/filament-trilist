@@ -1,0 +1,34 @@
+{
+  "name": "filament-trilist",
+  "dockerComposeFile": ["compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "initializeCommand": "cp -n demo/.env.example demo/.env || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "bradlc.vscode-tailwindcss",
+        "EditorConfig.EditorConfig",
+        "esbenp.prettier-vscode",
+        "esdete.tailwind-rainbow",
+        "laravel.vscode-laravel",
+        "liamhammett.temphpest",
+        "ms-azuretools.vscode-docker",
+        "neilbrayfield.php-docblocker",
+        "onecentlin.laravel-blade",
+        "pcbowers.alpine-intellisense",
+        "shardulm94.trailing-spaces",
+        "task.vscode-task",
+        "zamerick.vscode-caddyfile-syntax",
+        "ZencoderAI.zencoder"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/eitsupi/devcontainer-features/go-task:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": 22
+    }
+  }
+}
