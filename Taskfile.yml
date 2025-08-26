@@ -6,6 +6,7 @@ silent: true
 
 tasks:
   code:format: npx prettier resources --write
+
   code:analyse: php -d memory_limit=1G ./vendor/bin/phpstan
 
   demo:build:
@@ -48,3 +49,7 @@ tasks:
       - php artisan icons:cache
       - task: demo:db-reset
       - task: demo:build
+
+  plugin:build: npm install && npm run build
+
+  plugin:dev: npm run dev
