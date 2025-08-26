@@ -11,6 +11,9 @@
 /.phpunit.cache
 /.vscode
 /.zed
+/.phpstorm.meta.php
+/_ide_helper.php
+/_ide_helper_models.php
 /auth.json
 /node_modules
 /public/build
