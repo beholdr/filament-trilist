@@ -47,4 +47,6 @@ compile({
     ...defaultOptions,
     entryPoints: ['./resources/js/index.js'],
     outfile: './resources/dist/filament-trilist.js',
+}).then(() => {
+    console.log(`Build completed for filament-trilist.js`)
 })
