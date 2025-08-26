@@ -17,6 +17,11 @@ Do you like **Filament Trilist**? Please support me via [Boosty](https://boosty.
 
 ## Installation
 
+|Filament version | Package version |
+|-----------------|-----------------|
+| ^4.x            | 1.x.x           |
+| ^3.x            | 0.5.x           |
+
 You can install the package via composer:
 
 ```bash
@@ -231,13 +236,14 @@ Filter::make('category')
         $query->when(
             $data['category_id'],
             function (Builder $query, $values) {
-                $ids = Category::whereIn('id', $values)
+                $ids = Category::query()
+                    ->whereIn('id', $values)
                     ->get()
-                    ->map(fn (Category $category) => $category
-                        ->descendantsAndSelf()
-                        ->pluck('id')
-                        ->toArray()
-                    )->flatten();
+                    ->map
+                    ->descendantsAndSelf
+                    ->flatten()
+                    ->pluck('id')
+                    ->toArray();
                 $query->whereIn('category_id', $ids);
             }
         );
@@ -253,10 +259,12 @@ Filter::make('category')
 
 ![Treeview page](https://github.com/beholdr/filament-trilist/assets/741973/225ea768-3c42-45c3-a80d-88bdb159a4e5)
 
-Create [custom page class](https://filamentphp.com/docs/3.x/panels/resources/custom-pages) inside `Pages` directory of your resource directory. Note that page class extends `Beholdr\FilamentTrilist\Components\TrilistPage`:
+Create [custom page class](https://filamentphp.com/docs/4.x/navigation/custom-pages) inside `Pages` directory of your Filament directory. Note that page class extends `Beholdr\FilamentTrilist\Components\TrilistPage`:
+
+> If you create custom page with `php artisan make:filament-page` command, then select `No` option for creating this page in a resource. After page creation you can delete created page view file and `$view` property of the page class.
 
 ```php
-namespace App\Filament\Resources\PostResource\Pages;
+namespace App\Filament\Pages;
 
 use App\Filament\Resources\PostResource;
 use App\Models\Post;
@@ -264,44 +272,19 @@ use Beholdr\FilamentTrilist\Components\TrilistPage;
 
 class TreePosts extends TrilistPage
 {
+    // optional resource class if you want to link tree items to a resource edit page
     protected static string $resource = PostResource::class;
 
-    // optional page and tab title
+    // optional, if you want to override default title
     protected static ?string $title = 'Posts Tree';
+
+    // optional navigation parent page title
+    protected static ?string $navigationParentItem = 'Categories';
 
     // return array of tree items (see below about tree data)
     public function getTreeOptions(): array
     {
         return Post::root()->get()->toArray();
-    }
-}
-```
-
-Register created page in the static `getPages()` method of your resource:
-
-```php
-public static function getPages(): array
-{
-    return [
-        // ...
-        'tree' => Pages\TreePosts::route('/tree'),
-    ];
-}
-```
-
-Add link for a newly created page to your panel navigation:
-
-```php
-use App\Filament\Resources\PostResource\Pages\TreePosts;
-use Beholdr\FilamentTrilist\FilamentTrilistPlugin;
-use Filament\Navigation\NavigationItem;
-
-class AdminPanelProvider extends PanelProvider
-{
-    public function panel(Panel $panel): Panel
-    {
-        return $panel
-            ->navigationItems(TreePosts::getNavigationItems())
     }
 }
 ```
