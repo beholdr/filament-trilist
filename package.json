@@ -23,6 +23,6 @@
         "tailwindcss": "^4.1.12"
     },
     "dependencies": {
-        "trilist": "^0.5.0"
+        "trilist": "^0.6.0"
     }
 }

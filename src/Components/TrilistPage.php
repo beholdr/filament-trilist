@@ -2,13 +2,14 @@
 
 namespace Beholdr\FilamentTrilist\Components;
 
-use Filament\Navigation\NavigationItem;
-use Filament\Resources\Pages\Page;
+use Filament\Pages\Page;
 use Filament\Resources\Resource;
 
 class TrilistPage extends Page
 {
-    protected static string $view = 'filament-trilist::page';
+    protected static string $resource = ''; // override this
+
+    protected string $view = 'filament-trilist::page';
 
     protected static string $editRoute = 'edit';
 
@@ -64,6 +65,11 @@ class TrilistPage extends Page
     {
         /** @var Resource */
         $resource = static::$resource;
+
+        if (empty(static::$resource)) {
+            return null;
+        }
+
         $pages = $resource::getPages();
 
         if (empty($pages[static::$editRoute])) {
@@ -74,19 +80,5 @@ class TrilistPage extends Page
         $editPage = $pages[static::$editRoute]->getPage();
 
         return $editPage::getRouteName();
-    }
-
-    public static function getNavigationItems(array $urlParameters = []): array
-    {
-        $pageName = '.' . static::getResourcePageName();
-
-        return [
-            NavigationItem::make(static::getNavigationLabel())
-                ->url(fn () => route(static::getResource()::getRouteBaseName() . $pageName))
-                ->isActiveWhen(fn () => request()->routeIs(static::getResource()::getRouteBaseName() . $pageName))
-                ->group(fn () => static::getResource()::getNavigationGroup())
-                ->parentItem(fn () => static::getResource()::getNavigationLabel())
-                ->hidden(fn () => ! static::getResource()::canAccess()),
-        ];
     }
 }
