@@ -9,7 +9,7 @@ use Filament\Actions\Action;
 
 class CategoriesTree extends TrilistPage
 {
-    protected static string $resource = CategoryResource::class;
+    protected static ?string $resource = CategoryResource::class;
 
     protected static ?string $navigationParentItem = 'Categories';
 

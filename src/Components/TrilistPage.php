@@ -7,7 +7,8 @@ use Filament\Resources\Resource;
 
 class TrilistPage extends Page
 {
-    protected static string $resource = ''; // override this
+    /** @var class-string<Resource> | null */
+    protected static ?string $resource = null; // override this
 
     protected string $view = 'filament-trilist::page';
 
@@ -63,14 +64,11 @@ class TrilistPage extends Page
 
     protected function getEditRoute(): ?string
     {
-        /** @var Resource */
-        $resource = static::$resource;
-
         if (empty(static::$resource)) {
             return null;
         }
 
-        $pages = $resource::getPages();
+        $pages = static::$resource::getPages();
 
         if (empty($pages[static::$editRoute])) {
             return null;

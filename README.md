@@ -273,7 +273,7 @@ use Beholdr\FilamentTrilist\Components\TrilistPage;
 class TreePosts extends TrilistPage
 {
     // optional resource class if you want to link tree items to a resource edit page
-    protected static string $resource = PostResource::class;
+    protected static ?string $resource = PostResource::class;
 
     // optional, if you want to override default title
     protected static ?string $title = 'Posts Tree';
