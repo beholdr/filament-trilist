@@ -12,8 +12,14 @@
     --trilist-border-radius: var(--radius-lg);
     --trilist-border-radius-sm: var(--radius-md);
 
-    --trilist-text-base: var(--text-sm);
-    --trilist-text-sm: var(--text-xs);
+    @media (min-width: 640px) {
+        --trilist-text-base: var(--text-sm);
+        --trilist-text-sm: var(--text-xs);
+        --trilist-checkbox-y: calc(var(--spacing) * 0.75);
+    }
+
+    --trilist-select-x: calc(var(--spacing) * 3);
+    --trilist-select-y: calc(var(--spacing) * 1.5);
 }
 :root.dark {
     --trilist-color-accent: var(--primary-500);
