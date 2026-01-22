@@ -19,6 +19,7 @@ Do you like **Filament Trilist**? Please support me via [Boosty](https://boosty.
 
 |Filament version | Package version |
 |-----------------|-----------------|
+| ^5.x            | ^1.1.x          |
 | ^4.x            | 1.x.x           |
 | ^3.x            | 0.5.x           |
 
