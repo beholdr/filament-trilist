@@ -19,13 +19,14 @@
         "onecentlin.laravel-blade",
         "pcbowers.alpine-intellisense",
         "shardulm94.trailing-spaces",
+        "sst-dev.opencode",
         "task.vscode-task",
-        "zamerick.vscode-caddyfile-syntax",
-        "ZencoderAI.zencoder"
+        "zamerick.vscode-caddyfile-syntax"
       ]
     }
   },
   "features": {
+    "ghcr.io/danzilberdan/devcontainers/opencode:0": {},
     "ghcr.io/eitsupi/devcontainer-features/go-task:1": {},
     "ghcr.io/devcontainers/features/node:1": {
       "version": 22
