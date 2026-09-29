@@ -327,10 +327,10 @@ public function getLabelHook(): string
         return 'undefined';
     }
 
-    $template = route($editRoute, ['record' => '#ID#'], false);
+    $template = route($editRoute, ['record' => '--ID--'], false);
 
     return <<<JS
-    (item) => `<a href='\${'{$template}'.replace('#ID#', item.id)}'>\${item.label}</a> \${item.data?.description ? '<div style=\'font-size: 0.85em; opacity: 0.5\'>' + item.data.description + '</div>' : ''}`
+    (item) => `<a href='\${'{$template}'.replace('--ID--', item.id)}'>\${item.label}</a> \${item.data?.description ? '<div style=\'font-size: 0.85em; opacity: 0.5\'>' + item.data.description + '</div>' : ''}`
     JS;
 }
 ```

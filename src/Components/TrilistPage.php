@@ -25,10 +25,10 @@ class TrilistPage extends Page
             return 'undefined';
         }
 
-        $template = route($editRoute, ['record' => '#ID#'], false);
+        $template = route($editRoute, ['record' => '--ID--'], false);
 
         return <<<JS
-        (item) => `<a href='\${'{$template}'.replace('#ID#', item.id)}'>\${item.label}</a>`
+        (item) => `<a href='\${'{$template}'.replace('--ID--', item.id)}'>\${item.label}</a>`
         JS;
     }
 
